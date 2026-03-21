@@ -23,6 +23,7 @@ app.get('/test', (req, res) => {
   console.log('Test route hit');
   res.json({ message: 'Test route working - Updated!' });
 });
+
 // Test auth routes
 app.post('/api/auth/login', (req, res) => {
   console.log('Login route hit');
