@@ -2,28 +2,50 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('path');
-const connectDB = require('./config/db'); // ✅ MongoDB connection
+
+console.log('🚀 Server starting...');
+console.log('📁 Current directory:', __dirname);
 
 dotenv.config();
-connectDB(); // ✅ Connect to MongoDB
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ✅ Serve uploaded video files statically
+console.log('🔧 Setting up routes...');
+
+// Test route
+app.get('/', (req, res) => {
+  console.log('✅ Root route hit');
+  res.send('FarfaraPop API Running - Updated!');
+});
+
+// Simple test route
+app.get('/test', (req, res) => {
+  console.log('✅ Test route hit');
+  res.json({ message: 'Test route working - Updated!' });
+});
+
+// Test auth routes
+app.post('/api/auth/login', (req, res) => {
+  console.log('✅ Login route hit with body:', req.body);
+  res.json({ message: 'Login route working - Updated!', token: 'test-token-123' });
+});
+
+app.post('/api/auth/signup', (req, res) => {
+  console.log('✅ Signup route hit with body:', req.body);
+  res.json({ message: 'Signup route working - Updated!', token: 'test-token-123' });
+});
+
+// Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// ✅ Routes
-const videoRoutes = require('./routes/videoRoutes');
-const authRoutes = require('./routes/authRoutes');
-const uploadRoutes = require('./routes/upload'); // ✅ Local upload route
-
-app.use('/api/videos', videoRoutes);
-app.use('/api/auth', authRoutes);
-app.use('/api/upload', uploadRoutes); // ✅ Use upload route
-
-app.get('/', (req, res) => res.send('FarfaraPop API Running'));
-
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`🎉 Server running on port ${PORT}`);
+  console.log(`🛣️  Routes available:`);
+  console.log(`   GET  /`);
+  console.log(`   GET  /test`);
+  console.log(`   POST /api/auth/login`);
+  console.log(`   POST /api/auth/signup`);
+});
