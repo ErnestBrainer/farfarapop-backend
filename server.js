@@ -37,6 +37,25 @@ app.post('/api/auth/signup', (req, res) => {
   res.json({ message: 'Signup route working - Updated!', token: 'test-token-123' });
 });
 
+// Temporary videos endpoint for testing
+app.get('/api/videos', (req, res) => {
+  console.log('✅ Videos route hit');
+  res.json([
+    {
+      _id: '1',
+      title: 'Test Video 1',
+      artist: 'Test Artist',
+      url: 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4'
+    },
+    {
+      _id: '2', 
+      title: 'Test Video 2',
+      artist: 'Another Artist',
+      url: 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_2mb.mp4'
+    }
+  ]);
+});
+
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
@@ -48,4 +67,5 @@ app.listen(PORT, () => {
   console.log(`   GET  /test`);
   console.log(`   POST /api/auth/login`);
   console.log(`   POST /api/auth/signup`);
+  console.log(`   GET  /api/videos`);
 });
