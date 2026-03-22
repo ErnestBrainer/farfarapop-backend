@@ -3,6 +3,9 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('path');
 
+// Import routes
+const uploadRoutes = require('./routes/upload');
+
 console.log('🚀 Server starting...');
 console.log('📁 Current directory:', __dirname);
 
@@ -59,6 +62,9 @@ app.get('/api/videos', (req, res) => {
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// Use routes
+app.use('/api/upload', uploadRoutes);
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🎉 Server running on port ${PORT}`);
@@ -68,4 +74,5 @@ app.listen(PORT, () => {
   console.log(`   POST /api/auth/login`);
   console.log(`   POST /api/auth/signup`);
   console.log(`   GET  /api/videos`);
+  console.log(`   POST /api/upload/video`);
 });
