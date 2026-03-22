@@ -1,7 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
-const { uploadVideo } = require('../controllers/videoController');
+const { uploadVideo } = require('../controllers/uploadController');
 const protect = require('../middleware/authMiddleware');
 
 const router = express.Router();

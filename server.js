@@ -3,6 +3,9 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('path');
 
+// Import routes
+const uploadRoutes = require('./routes/upload');
+
 console.log('🚀 Server starting...');
 console.log('📁 Current directory:', __dirname);
 
@@ -45,19 +48,22 @@ app.get('/api/videos', (req, res) => {
       _id: '1',
       title: 'Test Video 1',
       artist: 'Test Artist',
-      url: 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4'
+      url: 'https://www.w3schools.com/html/mov_bbb.mp4'
     },
     {
       _id: '2', 
       title: 'Test Video 2',
       artist: 'Another Artist',
-      url: 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_2mb.mp4'
+      url: 'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4'
     }
   ]);
 });
 
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Use routes
+app.use('/api/upload', uploadRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
@@ -68,4 +74,5 @@ app.listen(PORT, () => {
   console.log(`   POST /api/auth/login`);
   console.log(`   POST /api/auth/signup`);
   console.log(`   GET  /api/videos`);
+  console.log(`   POST /api/upload/video`);
 });
