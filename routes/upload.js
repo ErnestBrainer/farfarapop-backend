@@ -27,6 +27,11 @@ const upload = multer({
   },
 });
 
+// ✅ Test route (no auth required)
+router.get('/test', (req, res) => {
+  res.json({ message: 'Upload routes working!' });
+});
+
 // ✅ Upload route (protected)
 router.post('/video', protect, upload.single('video'), (req, res) => {
   if (!req.file) {
