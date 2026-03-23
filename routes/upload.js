@@ -1,7 +1,6 @@
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
-const { uploadVideo } = require('../controllers/uploadController');
 const protect = require('../middleware/authMiddleware');
 
 const router = express.Router();
@@ -29,6 +28,22 @@ const upload = multer({
 });
 
 // ✅ Upload route (protected)
-router.post('/video', protect, upload.single('video'), uploadVideo);
+router.post('/video', protect, upload.single('video'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'No file uploaded' });
+  }
+
+  console.log('Uploaded file:', req.file);
+
+  const fileUrl = `/uploads/${req.file.filename}`;
+
+  res.status(201).json({
+    message: 'Video uploaded successfully',
+    video: {
+      url: fileUrl,
+      filename: req.file.originalname,
+    },
+  });
+});
 
 module.exports = router;
