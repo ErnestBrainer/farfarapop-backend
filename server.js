@@ -79,24 +79,19 @@ app.get('/api/videos', (req, res) => {
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Direct upload route (no auth for testing)
-app.post('/api/upload/video', upload.single('video'), (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ error: 'No file uploaded' });
-  }
-
-  console.log('Uploaded file:', req.file);
-
-  const fileUrl = `/uploads/${req.file.filename}`;
-
+// Test upload route (no multer)
+console.log('🔧 Setting up upload route...');
+app.post('/api/upload/video', (req, res) => {
+  console.log('📹 Upload route hit!');
   res.status(201).json({
-    message: 'Video uploaded successfully',
+    message: 'Video upload endpoint working (test mode)',
     video: {
-      url: fileUrl,
-      filename: req.file.originalname,
+      url: '/uploads/test.mp4',
+      filename: 'test.mp4',
     },
   });
 });
+console.log('✅ Upload route configured');
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
