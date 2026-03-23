@@ -2,6 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const path = require('path');
 const protect = require('../middleware/authMiddleware');
+const Video = require('../models/Video');
 
 const router = express.Router();
 
@@ -32,8 +33,8 @@ router.get('/test', (req, res) => {
   res.json({ message: 'Upload routes working!' });
 });
 
-// ✅ Simple upload route (no auth for testing)
-router.post('/video', upload.single('video'), (req, res) => {
+// ✅ Simple upload route (saves to database)
+router.post('/video', upload.single('video'), async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'No file uploaded' });
   }
@@ -42,13 +43,32 @@ router.post('/video', upload.single('video'), (req, res) => {
 
   const fileUrl = `/uploads/${req.file.filename}`;
 
-  res.status(201).json({
-    message: 'Video uploaded successfully',
-    video: {
+  try {
+    // Save to database
+    const video = await Video.create({
+      title: req.body.title || 'Untitled Video',
+      artist: req.body.artist || 'Unknown Artist',
       url: fileUrl,
-      filename: req.file.originalname,
-    },
-  });
+      likes: 0,
+      views: 0,
+      comments: []
+    });
+
+    console.log('Video saved to database:', video);
+
+    res.status(201).json({
+      message: 'Video uploaded successfully',
+      video: {
+        url: fileUrl,
+        filename: req.file.originalname,
+        title: video.title,
+        artist: video.artist
+      },
+    });
+  } catch (error) {
+    console.error('Error saving video:', error);
+    res.status(500).json({ error: 'Failed to save video' });
+  }
 });
 
 // ✅ Protected upload route (for when auth is working)
