@@ -2,9 +2,26 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('path');
+const multer = require('multer');
 
-// Import routes
-const uploadRoutes = require('./routes/upload');
+// Direct upload setup (bypass import issues)
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, path.join(__dirname, 'uploads'));
+    },
+    filename: (req, file, cb) => {
+      const ext = path.extname(file.originalname);
+      const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`;
+      cb(null, uniqueName);
+    },
+  }),
+  limits: { fileSize: Number.MAX_SAFE_INTEGER },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype === 'video/mp4') cb(null, true);
+    else cb(new Error('Only .mp4 files are allowed'));
+  },
+});
 
 console.log('🚀 Server starting...');
 console.log('📁 Current directory:', __dirname);
@@ -62,8 +79,24 @@ app.get('/api/videos', (req, res) => {
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Use routes
-app.use('/api/upload', uploadRoutes);
+// Direct upload route (no auth for testing)
+app.post('/api/upload/video', upload.single('video'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'No file uploaded' });
+  }
+
+  console.log('Uploaded file:', req.file);
+
+  const fileUrl = `/uploads/${req.file.filename}`;
+
+  res.status(201).json({
+    message: 'Video uploaded successfully',
+    video: {
+      url: fileUrl,
+      filename: req.file.originalname,
+    },
+  });
+});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
@@ -74,5 +107,5 @@ app.listen(PORT, () => {
   console.log(`   POST /api/auth/login`);
   console.log(`   POST /api/auth/signup`);
   console.log(`   GET  /api/videos`);
-  console.log(`   POST /api/upload/video`);
+  console.log(`   POST /api/upload/video (direct)`);
 });
