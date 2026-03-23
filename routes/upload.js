@@ -6,6 +6,9 @@ const Video = require('../models/Video');
 
 const router = express.Router();
 
+// Get backend URL
+const BACKEND_URL = process.env.BACKEND_URL || 'https://farfarapop-backend-1.onrender.com';
+
 // ✅ Multer storage setup
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -41,7 +44,7 @@ router.post('/video', upload.single('video'), async (req, res) => {
 
   console.log('Uploaded file:', req.file);
 
-  const fileUrl = `/uploads/${req.file.filename}`;
+  const fileUrl = `${BACKEND_URL}/uploads/${req.file.filename}`;
 
   try {
     // Save to database
